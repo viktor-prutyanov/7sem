@@ -1,4 +1,4 @@
 # 7sem
 Seventh term tasks
-##ps
+## 7sem/ps
 ps inpired tool
