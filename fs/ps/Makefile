@@ -1,10 +1,10 @@
 all: ps
 
 ps: ps.o
-	$(CC) $? -g -o $@
+	$(CC) $? -Wall -g -o $@
 
 %.o: %.c
-	$(CC) $? -c -g -o $@
+	$(CC) $? -Wall -c -g -o $@
 
 clean:
 	rm -f *.o

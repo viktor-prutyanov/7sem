@@ -12,6 +12,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #define eprintf(...) fprintf(stderr, __VA_ARGS__)
 
@@ -23,8 +25,6 @@
 
 #define MAX_PATH_SIZE 64
 #define MAX_STATUS_SIZE 2048
-
-#define PAGER "less"
 
 struct pid_stat_t {
     char *status;
@@ -51,7 +51,7 @@ int pid_stat_print(FILE *file, struct pid_stat_t *ps)
             ps->vmsize, ps->threads); 
 }
 
-int pid_stat_create(int pid, struct pid_stat_t *ps)
+int pid_stat_create(pid_t pid, struct pid_stat_t *ps)
 {
     int err = 0;
     char path[MAX_PATH_SIZE] = {};
@@ -101,6 +101,17 @@ void pid_stat_destroy(struct pid_stat_t *ps)
     free(ps->status);
 }
 
+pid_t strtopid(char *str)
+{
+    char *endptr = NULL;
+    errno = 0;
+    long int num = strtol(str, &endptr, 10);
+    if (errno || *endptr)
+        return 0;
+    else
+        return (pid_t)num;
+}
+
 int main(int argc, char *argv[])
 {
     int err = 0;
@@ -108,23 +119,31 @@ int main(int argc, char *argv[])
   
     if (argc == 1) {
         struct pid_stat_t ps;
-        FILE *pager = popen(PAGER, "w");
-        if (!pager) {
-            eprintf("Can't run pager '%s'\n", PAGER);
+
+        print_header(stdout);
+        
+        DIR *dirp = opendir("/proc");
+        if (!dirp) {
+            eprintf("opendir: %s\n", strerror(errno));
             return -1;
         }
-
-        print_header(pager);
-        for (int pid = 1; pid < INT16_MAX; ++pid) {
-            err = pid_stat_create(pid, &ps);
-            if (!err) {
-                pid_stat_print(pager, &ps);
-                pid_stat_destroy(&ps);
+        
+        struct dirent *dir = readdir(dirp);
+        while (dir && !errno) {
+            char name[256];
+            snprintf(name, NAME_MAX, "%s", dir->d_name);
+            pid_t pid = strtopid(name);
+            if (pid) {
+                if (!pid_stat_create(pid, &ps)) {
+                    pid_stat_print(stdout, &ps);
+                    pid_stat_destroy(&ps);
+                }
             }
-            err = 0;
+            dir = readdir(dirp); 
         }
-
-        pclose(pager);
+        
+        closedir(dirp);
+        err = -errno;
     } else if (argc == 2) {
         int pid = atoi(argv[1]);
         struct pid_stat_t ps;
