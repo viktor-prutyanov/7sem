@@ -64,8 +64,7 @@ int pid_stat_create(int pid, struct pid_stat_t *ps)
         return -errno;
     }
 
-    ps->status = malloc(MAX_STATUS_SIZE * sizeof(char));
-    ps->status[MAX_STATUS_SIZE - 1] = '\0';
+    ps->status = calloc(MAX_STATUS_SIZE, sizeof(char));
     err = read(fd, ps->status, MAX_STATUS_SIZE - 1);
     if (err < 0) {
         pr_debug("read: %s\n", strerror(errno));
