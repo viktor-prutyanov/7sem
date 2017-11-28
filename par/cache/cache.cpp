@@ -14,7 +14,7 @@
 using namespace std;
 
 struct line {
-	uint64_t data[8];
+    uint64_t data[8];
 };
 
 int main() {
@@ -28,32 +28,32 @@ int main() {
         if (buf == MAP_FAILED)
             return -1;
 
-		line *lines = (line *)buf;
+        line *lines = (line *)buf;
 
         for (uint64_t j = 0; j < nr_blocks; j++) {
-			for (uint64_t i = 0; i < nr_blocks - 1; i++) {
-				lines[i * BLOCK_SIZE + j].data[0] = (i + 1) * BLOCK_SIZE + j;
-			}
-			lines[(nr_blocks - 1) * BLOCK_SIZE + j].data[0] = j + 1;
+            for (uint64_t i = 0; i < nr_blocks - 1; i++) {
+                lines[i * BLOCK_SIZE + j].data[0] = (i + 1) * BLOCK_SIZE + j;
+            }
+            lines[(nr_blocks - 1) * BLOCK_SIZE + j].data[0] = j + 1;
         }
 
-		lines[(nr_blocks - 1) * BLOCK_SIZE + nr_blocks - 1].data[0] = 0;
+        lines[(nr_blocks - 1) * BLOCK_SIZE + nr_blocks - 1].data[0] = 0;
         
         volatile register uint64_t tmp = 0;
-		volatile register uint64_t next = 0;
-		
-		auto start = chrono::high_resolution_clock::now();
+        volatile register uint64_t next = 0;
+        
+        auto start = chrono::high_resolution_clock::now();
         for (uint64_t i = 0; i < NR; i++) {
-			tmp = next;
-			next = lines[next].data[0];
-		}
-		auto finish = chrono::high_resolution_clock::now();
-		
+            tmp = next;
+            next = lines[next].data[0];
+        }
+        auto finish = chrono::high_resolution_clock::now();
+        
         cout << nr_blocks << " " 
              << chrono::duration<uint64_t, nano>(finish - start).count() / NR
              << "\n";
-		munmap((void *)lines, sizeof(line) * nr_blocks * BLOCK_SIZE);
-	}
+        munmap((void *)lines, sizeof(line) * nr_blocks * BLOCK_SIZE);
+    }
 
     cout << "e\n";
 
