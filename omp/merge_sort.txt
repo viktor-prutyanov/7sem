@@ -1,0 +1,35 @@
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=1 ./a.out 10000000 0
+22.093958 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=2 ./a.out 10000000 1
+11.808997 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=4 ./a.out 10000000 2
+6.658056 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=8 ./a.out 10000000 3
+4.250338 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=16 ./a.out 10000000 4
+3.124996 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=32 ./a.out 10000000 5
+2.922434 sec
+
+Время       CC  Ускорение           Эффективность   
+22,093958   1   1,0                 1,0
+11,808997   2   1,870942807420478   0,935471403710239
+6,658056    4   3,3183797192453772  0,8295949298113443
+4,250338    8   5,1981649459407695  0,6497706182425962
+3,124996    16  7,070075609696781   0,4418797256060488
+2,922434    32  7,560122144760156   0,23625381702375486
+
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=1 ./a.out 10000000 0 1
+21.907321 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=1 ./a.out 10000000 0 8
+18.661439 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=2 ./a.out 10000000 1 8
+9.890490 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=4 ./a.out 10000000 2 8
+5.640248 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=8 ./a.out 10000000 3 8
+3.684983 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=16 ./a.out 10000000 4 8
+2.700479 sec
+[s41611@calcnoqueue ~]$ OMP_NUM_THREADS=32 ./a.out 10000000 5 8
+2.549159 sec
