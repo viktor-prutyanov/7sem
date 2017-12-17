@@ -17,7 +17,7 @@ typedef struct btree {
     bnode_t *root;
 } btree_t;
 
-void btree_create(btree_t *btree);
+int btree_create(btree_t *btree);
 void btree_destroy(btree_t *btree);
 void btree_insert(btree_t *btree, uint64_t key, uint64_t val);
 bnode_t *btree_search(btree_t *btree, uint64_t key, uint64_t *val);

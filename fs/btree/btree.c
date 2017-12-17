@@ -9,18 +9,19 @@
 
 static bnode_t *bnode_alloc()
 {
-	bnode_t *bnode = (bnode_t *)malloc(sizeof(bnode_t));
-	if (!bnode)
-		return NULL;
-
-	return bnode;
+	return (bnode_t *)malloc(sizeof(bnode_t));
 }
 
-void btree_create(btree_t *btree)
+int btree_create(btree_t *btree)
 {
     btree->root = bnode_alloc();
+    if (!btree->root)
+        return -1; 
+    
     btree->root->is_leaf = true;
     btree->root->nr_keys = 0;
+
+    return 0;
 }
 
 static void bnode_free(bnode_t *bnode)

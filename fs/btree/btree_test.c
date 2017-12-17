@@ -12,7 +12,8 @@ int main()
     btree_t btree;
    
     fprintf(stdout, "Insertion test:\n");
-    btree_create(&btree);
+    if (btree_create(&btree))
+        return -1;
    
     clock_t clk = clock(); 
     for (long int i = 0; i < NR_INS; ++i) {
@@ -24,7 +25,8 @@ int main()
     btree_destroy(&btree);
     
     fprintf(stdout, "Deletion test:\n");
-    btree_create(&btree);
+    if (btree_create(&btree))
+        return -1;
     
     for (long int i = 0; i < NR_DEL; ++i) {
         uint64_t key = random() % NR_DEL;
