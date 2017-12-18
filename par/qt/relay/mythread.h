@@ -9,32 +9,36 @@
 
 class MyThread : public QThread
 {
+    Q_OBJECT
+
 public:
     MyThread()
-        :next(nullptr), number(0)
+        :number(0)
     {
         //nothing to do
     }
-    void set(MyThread *next, int n)
+    void set(int n)
     {
-        this->next = next;
         this->number = n;
     }
     void go()
     {
-        sem.release(1);
+        printf("Thread #%d\n", number);
+        emit go_next();
+        quit();
     }
+signals:
+    void go_next();
 protected:
     void run()
     {
-        sem.acquire(1);
-        printf("Thread #%d\n", number);
-        if (next != nullptr)
-            next->go();
+        exec();
+    }
+public slots:
+    void do_go() {
+        go();
     }
 private:
-    QSemaphore sem;
-    MyThread *next;
     int number;
 };
 

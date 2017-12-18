@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication loop(argc, argv);
+
     if (argc != 2)
     {
         printf("usage: %s num_threads\n", argv[0]);
@@ -15,12 +17,15 @@ int main(int argc, char *argv[])
 
     std::vector<MyThread> threads(n);
     for (int i = 1; i < n; ++i)
-        threads[i].set(&threads[i - 1], i);
+        threads[i].set(i);
+
+    for (int i = 0; i < n - 1; i++)
+        QObject::connect(&threads[i], SIGNAL(go_next()), &threads[i+1], SLOT(do_go()));
 
     for (auto &t : threads)
         t.start();
 
-    threads[n - 1].go();
+    threads[0].go();
 
     for (auto &t : threads)
         t.wait();
